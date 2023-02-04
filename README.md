@@ -2,20 +2,20 @@
 An attempt at doing The Ray Tracer Challenge by Jamis Buck
 
 # Progress
-- [] 1. Tuples, Points and Vectors
-- [] 2. Drawing on a Canvas
-- [] 3. Matrices
-- [] 4. Matrix Transformations
-- [] 5. Ray-Sphere Intersections
-- [] 6. Light and Shading
-- [] 7. Making a Scene
-- [] 8. Shadows
-- [] 9. Planes
-- [] 10. Patterns
-- [] 11. Reflection and Refraction
-- [] 12. Cubes
-- [] 13. Cylinders
-- [] 14. Groups
-- [] 15. Triangles
-- [] 16. Constructive Solid Geometry (CSG)
-- [] 17. Rendering the Cover Image
+- [ ] Chapter 1. Tuples, Points and Vectors
+- [ ] Chapter 2. Drawing on a Canvas
+- [ ] Chapter 3. Matrices
+- [ ] Chapter 4. Matrix Transformations
+- [ ] Chapter 5. Ray-Sphere Intersections
+- [ ] Chapter 6. Light and Shading
+- [ ] Chapter 7. Making a Scene
+- [ ] Chapter 8. Shadows
+- [ ] Chapter 9. Planes
+- [ ] Chapter 10. Patterns
+- [ ] Chapter 11. Reflection and Refraction
+- [ ] Chapter 12. Cubes
+- [ ] Chapter 13. Cylinders
+- [ ] Chapter 14. Groups
+- [ ] Chapter 15. Triangles
+- [ ] Chapter 16. Constructive Solid Geometry (CSG)
+- [ ] Chapter 17. Rendering the Cover Image
