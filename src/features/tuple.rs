@@ -55,6 +55,16 @@ impl Tuple {
             w: 0.0,
         }
     }
+
+    fn normalize(&self) -> Self {
+        let m = self.magnitude();
+        Self {
+            x: self.x / m,
+            y: self.y / m,
+            z: self.z / m,
+            w: self.w / m,
+        }
+    }
 }
 
 impl Add for Tuple {
@@ -239,5 +249,38 @@ mod tests {
     fn computing_the_magnitude_of_vector_1_0_0() {
         let v = Tuple::vector(1.0, 0.0, 0.0);
         assert_eq!(v.magnitude(), 1.0);
+    }
+
+    #[test]
+    fn normalize_tuple() {
+        let a = Tuple::vector(4.0, 0.0, 0.0);
+        let b = a.normalize();
+        assert_eq!(b, Tuple::vector(1.0, 0.0, 0.0));
+
+        let c = Tuple::vector(1.0, 2.0, 3.0);
+        let d = c.normalize();
+        let expected = Tuple::vector(1.0 / 14.0f64.sqrt(), 2.0 / 14.0f64.sqrt(), 3.0 / 14.0f64.sqrt());
+        assert_eq!(d, expected);
+    }
+
+    #[test]
+    fn dot_product() {
+        let a = Tuple::vector(1.0, 2.0, 3.0);
+        let b = Tuple::vector(2.0, 3.0, 4.0);
+        let result = a.dot(&b);
+        assert_eq!(result, 20.0);
+    }
+
+    #[test]
+    fn cross_product() {
+        let a = Tuple::vector(1.0, 2.0, 3.0);
+        let b = Tuple::vector(2.0, 3.0, 4.0);
+        let result = a.cross(&b);
+        assert_eq!(result, Tuple::vector(-1.0, 2.0, -1.0));
+
+        let c = Tuple::vector(2.0, 3.0, 4.0);
+        let d = Tuple::vector(1.0, 2.0, 3.0);
+        let result = c.cross(&d);
+        assert_eq!(result, Tuple::vector(1.0, -2.0, 1.0));
     }
 }
