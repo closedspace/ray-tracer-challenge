@@ -1,4 +1,8 @@
 use std::ops::Add;
+use std::ops::Sub;
+use std::ops::Mul;
+use std::ops::Div;
+use std::ops::Neg;
 
 use std::f64::EPSILON;
 
@@ -35,6 +39,22 @@ impl Tuple {
         Self::new(x, y, z, 0.0)
     }
 
+    fn magnitude(&self) -> f64 {
+        (self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w).sqrt()
+    }
+
+    fn dot(&self, other: &Self) -> f64 {
+        self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w
+    }
+
+    fn cross(&self, other: &Self) -> Self {
+        Self {
+            x: self.y * other.z - self.z * other.y,
+            y: self.z * other.x - self.x * other.z,
+            z: self.x * other.y - self.y * other.x,
+            w: 0.0,
+        }
+    }
 }
 
 impl Add for Tuple {
@@ -49,8 +69,41 @@ impl Add for Tuple {
     }
 }
 
-// TODO: IMPLEMENT SUBTRACTION, SCALAR MULTIPLICATION AND DIVISION, NEGATION, MAGNITUDE
-// NORMALIZATION, DOT PRODUCT, CROSS PRODUCT,
+impl Sub for Tuple {
+    type Output = Self;
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+            z: self.z - other.z,
+            w: self.w - other.w,
+        }
+    }
+}
+
+impl Div<f64> for Tuple {
+    type Output = Self;
+    fn div(self, scalar: f64) -> Self {
+        Self {
+            x: self.x / scalar,
+            y: self.y / scalar,
+            z: self.z / scalar,
+            w: self.w / scalar,
+        }
+    }
+}
+
+impl Neg for Tuple {
+    type Output = Self;
+    fn neg(self) -> Self {
+        Self {
+        x: -self.x,
+        y: -self.y,
+        z: -self.z,
+        w: -self.w,
+        }
+    }
+}
 
 impl PartialEq for Tuple {
     fn eq(&self, other: &Self) -> bool {
@@ -58,6 +111,25 @@ impl PartialEq for Tuple {
             && almost_equal(self.y, other.y)
             && almost_equal(self.z, other.z)
             && almost_equal(self.w, other.w)
+    }
+}
+
+impl Mul<f64> for Tuple {
+    type Output = Self;
+    fn mul(self, scalar: f64) -> Self {
+        Self {
+            x: self.x * scalar,
+            y: self.y * scalar,
+            z: self.z * scalar,
+            w: self.w * scalar,
+        }
+    }
+}
+
+impl Mul<Tuple> for f64 {
+    type Output = Tuple;
+    fn mul(self, tuple: Tuple) -> Tuple {
+        tuple * self
     }
 }
 
