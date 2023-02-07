@@ -2,7 +2,7 @@
 An attempt at doing The Ray Tracer Challenge by Jamis Buck
 
 # Progress
-- [ ] Chapter 1. Tuples, Points and Vectors
+- [x] Chapter 1. Tuples, Points and Vectors
 - [ ] Chapter 2. Drawing on a Canvas
 - [ ] Chapter 3. Matrices
 - [ ] Chapter 4. Matrix Transformations
