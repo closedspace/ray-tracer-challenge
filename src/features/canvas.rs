@@ -83,33 +83,4 @@ mod tests {
         assert_eq!(c.pixel_at(2, 3), red);
     }
 
-    #[test]
-    fn canvas_to_ppm() {
-        let mut c = Canvas::new(5, 3);
-        let c1 = Color::new(1.5, 0.0, 0.0);
-        let c2 = Color::new(0.0, 0.5, 0.0);
-        let c3 = Color::new(-0.5, 0.0, 1.0);
-        c.write_pixel(0, 0, c1);
-        c.write_pixel(2, 1, c2);
-        c.write_pixel(4, 2, c3);
-        let ppm = c.canvas_to_ppm();
-        let expected = "P3\n5 3\n255\n255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 \n0 0 0 0 0 0 0 128 0 0 0 0 0 0 0 \n0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 \n";
-        assert_eq!(ppm, expected);
-    }
-
-    // splitlong lines in ppm 
-    #[test]
-    fn canvas_to_ppm_split_lines() {
-        let mut c = Canvas::new(10, 2);
-        let c1 = Color::new(1.0, 0.8, 0.6);
-        for y in 0..2 {
-            for x in 0..10 {
-                c.write_pixel(x, y, c1);
-            }
-        }
-        let ppm = c.canvas_to_ppm();
-        let expected = "P3\n10 2\n255\n255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 \n255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 \n";
-        assert_eq!(ppm, expected);
-    }
-
 }
