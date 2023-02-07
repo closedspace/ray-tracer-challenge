@@ -1,7 +1,3 @@
-// implement a color tuple type
-// pub mod color;
-//
-
 use std::ops::{Mul, Sub, Add};
 
 use super::{util::almost_equal, tuple::Tuple};
@@ -79,8 +75,6 @@ impl Mul for Color {
     }
 }
 
-// add tests
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -113,7 +107,6 @@ mod tests {
         assert_eq!(c * 2.0, Color::new(0.4, 0.6, 0.8));
     }
 
-    // test hadamard product
     #[test]
     fn multiply_colors() {
         let c1 = Color::new(1.0, 0.2, 0.4);

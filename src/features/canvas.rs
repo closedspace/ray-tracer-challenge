@@ -22,7 +22,6 @@ impl Canvas {
     }
 
     pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
-        // make sure to check that the pixel is in bounds
         if x >= self.width || y >= self.height {
             return;
         }
@@ -32,7 +31,7 @@ impl Canvas {
     pub fn pixel_at(&self, x: usize, y: usize) -> Color {
         self.pixels[y][x]
     }
-    // make sure to split the lines at 70 characters
+
     pub fn canvas_to_ppm(&self) -> String {
         let mut ppm = format!("P3\n{} {}\n255\n", self.width, self.height);
         let mut line_length = 0;
@@ -62,7 +61,6 @@ impl Canvas {
         
 }
 
-// write tests
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -87,7 +85,6 @@ mod tests {
         assert_eq!(c.pixel_at(2, 3), red);
     }
 
-    // test ppm
     #[test]
     fn constructing_ppm_header() {
         let c = Canvas::new(5, 3);
