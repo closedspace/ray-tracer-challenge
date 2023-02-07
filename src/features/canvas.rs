@@ -22,6 +22,10 @@ impl Canvas {
     }
 
     pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
+        // make sure to check that the pixel is in bounds
+        if x >= self.width || y >= self.height {
+            return;
+        }
         self.pixels[y][x] = color;
     }
 
@@ -83,4 +87,14 @@ mod tests {
         assert_eq!(c.pixel_at(2, 3), red);
     }
 
+    // test ppm
+    #[test]
+    fn constructing_ppm_header() {
+        let c = Canvas::new(5, 3);
+        let ppm = c.canvas_to_ppm();
+        let lines: Vec<&str> = ppm.split("\n").collect();
+        assert_eq!(lines[0], "P3");
+        assert_eq!(lines[1], "5 3");
+        assert_eq!(lines[2], "255");
+    }
 }
