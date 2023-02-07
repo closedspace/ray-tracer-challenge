@@ -7,7 +7,7 @@ use crate::features::color::Color;
 use crate::features::tuple::Tuple;
 
 fn main() {
-    let mut projectile = (Tuple::point(0.0, 1.0, 0.0), Tuple::vector(1.0, 1.0, 0.0).normalize() * 11.25);
+    let mut projectile = (Tuple::point(0.0, 1.0, 0.0), Tuple::vector(1.0, 1.8, 0.0).normalize() * 11.25);
     let environment = (Tuple::vector(0.0, -0.1, 0.0), Tuple::vector(-0.01, 0.0, 0.0));
 
     fn tick(env: (Tuple, Tuple), proj: (Tuple, Tuple)) -> (Tuple, Tuple) {
