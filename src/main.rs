@@ -5,6 +5,7 @@ use std::io::Write;
 use crate::features::canvas::Canvas;
 use crate::features::color::Color;
 use crate::features::tuple::Tuple;
+use crate::features::matrix::Matrix;
 
 fn main() {
     let mut projectile = (Tuple::point(0.0, 1.0, 0.0), Tuple::vector(1.0, 1.8, 0.0).normalize() * 11.25);

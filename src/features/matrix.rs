@@ -1,3 +1,35 @@
+use std::ops::Add;
+use std::ops::Sub;
+use std::ops::Mul;
+
+#[derive(Debug, Clone)]
+pub struct Matrix {
+    // values, rows, cols
+}
+
+impl Matrix {
+    pub fn new() -> Self {
+        // TODO
+    }
+
+    pub fn identify() -> Self {
+        // TODO
+    }
+}
+
+impl Add for Matrix {
+    // TODO
+}
+
+impl Sub for Matrix {
+    // TODO
+}
+
+impl Mul for Matrix {
+    // TODO
+}
+
+// TODO: rewrite all instances of vec using tuples
 #[cfg(test)]
 mod tests {
     use super::*;
