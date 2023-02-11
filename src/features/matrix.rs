@@ -180,7 +180,6 @@ impl PartialEq for Matrix {
 }
 
 
-// addition test for matrix
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -215,7 +214,6 @@ mod tests {
         assert_eq!(matrix1.transpose(), matrix2);
     }
     
-    // determinant test for matrix 
     #[test]
     fn determinant_matrix() {
         let matrix1 = Matrix::new(vec![vec![1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0], vec![7.0, 8.0, 9.0]]);
