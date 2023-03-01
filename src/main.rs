@@ -1,12 +1,12 @@
 mod features;
-use std::fs::File;
-use std::io::Write;
+
+use std::f64::consts::PI;
 
 use crate::features::canvas::Canvas;
 use crate::features::color::Color;
 use crate::features::tuple::Tuple;
 
-fn main() {
+fn projectile_model() {
     let mut projectile = (Tuple::point(0.0, 1.0, 0.0), Tuple::vector(1.0, 1.8, 0.0).normalize() * 11.25);
     let environment = (Tuple::vector(0.0, -0.1, 0.0), Tuple::vector(-0.01, 0.0, 0.0));
 
@@ -30,4 +30,11 @@ fn main() {
     }
 
     canvas.canvas_to_file("projectile.ppm");
+}
+fn main() {
+    let i = PI / 2.0;
+    let x = i.cos();
+    // print x to the console
+    println!("x = {}", x);
+
 }
