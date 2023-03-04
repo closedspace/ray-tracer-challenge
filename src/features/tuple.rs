@@ -138,17 +138,6 @@ impl Mul<Tuple> for f64 {
     }
 }
 
-impl Mul<Matrix> for Tuple {
-    type Output = Self;
-    fn mul(self, matrix: Matrix) -> Self {
-        let x = self.x * matrix.rows[0][0] + self.y * matrix.rows[0][1] + self.z * matrix.rows[0][2] + self.w * matrix.rows[0][3];
-        let y = self.y * matrix.rows[1][0] + self.y * matrix.rows[1][1] + self.z * matrix.rows[1][2] + self.w * matrix.rows[1][3];
-        let z = self.z * matrix.rows[2][0] + self.y * matrix.rows[2][1] + self.z * matrix.rows[2][2] + self.w * matrix.rows[2][3];
-        let w = self.w * matrix.rows[3][0] + self.y * matrix.rows[3][1] + self.z * matrix.rows[3][2] + self.w * matrix.rows[3][3];
-        Self { x, y, z, w }
-    }
-}
-
 
 #[cfg(test)]
 mod tests {
@@ -291,12 +280,4 @@ mod tests {
         assert_eq!(result, Tuple::vector(1.0, -2.0, 1.0));
     }
 
-    #[test]
-    fn multiply_tuple_by_matrix() {
-        let point = Tuple::point(1.0, 2.0, 3.0);
-        let translation_matrix = Matrix::translation(2.0, 3.0, 4.0);
-        let expected = Tuple::point(3.0, 5.0, 7.0);
-        let result = point * translation_matrix;
-        assert_eq!(expected, result);
-    }
 }

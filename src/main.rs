@@ -32,9 +32,5 @@ fn projectile_model() {
     canvas.canvas_to_file("projectile.ppm");
 }
 fn main() {
-    let i = PI / 2.0;
-    let x = i.cos();
-    // print x to the console
-    println!("x = {}", x);
 
 }

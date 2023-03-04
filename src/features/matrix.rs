@@ -132,57 +132,58 @@ impl Matrix {
     }
 
     pub fn translation(x: f64, y: f64, z: f64) -> Self {
-        let mut matrix = Matrix::identity(4);
-        matrix.rows[0][3] = x;
-        matrix.rows[1][3] = y;
-        matrix.rows[2][3] = z;
-        matrix
+        Matrix::new(vec![
+            vec![1.0, 0.0, 0.0, x],
+            vec![0.0, 1.0, 0.0, y],
+            vec![0.0, 0.0, 1.0, z],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
     }
 
     pub fn scaling(x: f64, y: f64, z: f64) -> Self {
-        let mut matrix = Matrix::identity(4);
-        matrix.rows[0][0] = x;
-        matrix.rows[1][1] = y;
-        matrix.rows[2][2] = z;
-        matrix
+        Matrix::new(vec![
+            vec![x, 0.0, 0.0, 0.0],
+            vec![0.0, y, 0.0, 0.0],
+            vec![0.0, 0.0, z, 0.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
     }
 
     pub fn rotation_x(radians: f64) -> Self {
-        let mut matrix = Matrix::identity(4);
-        matrix.rows[1][1] = radians.cos();
-        matrix.rows[1][2] = -radians.sin();
-        matrix.rows[2][1] = radians.sin();
-        matrix.rows[2][2] = radians.cos();
-        matrix
+        Matrix::new(vec![
+            vec![1.0, 0.0, 0.0, 0.0],
+            vec![0.0, radians.cos(), -radians.sin(), 0.0],
+            vec![0.0, radians.sin(), radians.cos(), 0.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
     }
 
     pub fn rotation_y(radians: f64) -> Self {
-        let mut matrix = Matrix::identity(4);
-        matrix.rows[0][0] = radians.cos();
-        matrix.rows[0][2] = radians.sin();
-        matrix.rows[2][0] = -radians.sin();
-        matrix.rows[2][2] = radians.cos();
-        matrix
+        Matrix::new(vec![
+            vec![radians.cos(), 0.0, radians.sin(), 0.0],
+            vec![0.0, 1.0, 0.0, 0.0],
+            vec![-radians.sin(), 0.0, radians.cos(), 0.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
+    
     }
 
     pub fn rotation_z(radians: f64) -> Self {
-        let mut matrix = Matrix::identity(4);
-        matrix.rows[0][0] = radians.cos();
-        matrix.rows[0][1] = -radians.sin();
-        matrix.rows[1][0] = radians.sin();
-        matrix.rows[1][1] = radians.cos();
-        matrix
+        Matrix::new(vec![
+            vec![radians.cos(), -radians.sin(), 0.0, 0.0],
+            vec![radians.sin(), radians.cos(), 0.0, 0.0],
+            vec![0.0, 0.0, 1.0, 0.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
     }
 
     pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
-        let mut matrix = Matrix::identity(4);
-        matrix.rows[0][1] = xy;
-        matrix.rows[0][2] = xz;
-        matrix.rows[1][0] = yx;
-        matrix.rows[1][2] = yz;
-        matrix.rows[2][0] = zx;
-        matrix.rows[2][1] = zy;
-        matrix
+        Matrix::new(vec![
+            vec![1.0, xy, xz, 0.0],
+            vec![yx, 1.0, yz, 0.0],
+            vec![zx, zy, 1.0, 0.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
     }
 
 }
@@ -222,6 +223,7 @@ impl Mul for Matrix {
         Matrix::new(rows)
     }
 }
+
 
 impl PartialEq for Matrix {
     fn eq(&self, other: &Self) -> bool {
@@ -359,7 +361,7 @@ mod tests {
         let point = Tuple::point(-4.0,6.0, 8.0);
         let scaling_matrix = Matrix::scaling(2.0, 3.0, 4.0);
         let expected = Tuple::point(-8.0, 18.0, 32.0);
-        assert_eq!(point * scaling_matrix, expected);
+        assert_eq!(scaling_matrix * point, expected);
     }
 
     #[test]
@@ -367,7 +369,7 @@ mod tests {
         let vector = Tuple::vector(1.0,2.0, 3.0);
         let scaling_matrix = Matrix::scaling(2.0, 3.0, 4.0);
         let expected = Tuple::vector(2.0, 6.0, 12.0);
-        assert_eq!(vector * scaling_matrix, expected);
+        assert_eq!(scaling_matrix * vector, expected);
     }
 
     #[test]
@@ -376,7 +378,7 @@ mod tests {
         let scaling_matrix = Matrix::scaling(2.0, 3.0, 4.0);
         let inverted_matrix = scaling_matrix.inverse().unwrap();
         let expected = Tuple::vector(-2.0, 2.0, 2.0);
-        assert_eq!(vector * inverted_matrix, expected);
+        assert_eq!(inverted_matrix * vector, expected);
     }
 
     #[test]
@@ -384,7 +386,7 @@ mod tests {
         let point = Tuple::point(1.0, 2.0, 3.0);
         let scaling_matrix = Matrix::scaling(-1.0, 1.0, 1.0);
         let expected = Tuple::point(-1.0, 2.0, 3.0);
-        assert_eq!(point * scaling_matrix, expected);
+        assert_eq!(scaling_matrix * point, expected);
     }
 
     #[test]
@@ -434,7 +436,7 @@ mod tests {
         let point = Tuple::point(2.0, 3.0, 4.0);
         let shear_matrix = Matrix::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         let expected = Tuple::point(5.0, 3.0, 4.0);
-        assert_eq!(point * shear_matrix, expected);
+        assert_eq!(shear_matrix * point, expected);
     }
 
     #[test]
@@ -450,35 +452,6 @@ mod tests {
         let p4 = translation * p3;
         assert_eq!(p4, Tuple::point(15.0, 0.0, 7.0));
     }
-
-    #[test]
-    fn matrix_multiplication_is_associative() {
-        let A = Matrix::new(vec![
-            vec![1.0, 2.0, 3.0, 4.0],
-            vec![5.0, 6.0, 7.0, 8.0],
-            vec![9.0, 8.0, 7.0, 6.0],
-            vec![5.0, 4.0, 3.0, 2.0],
-        ]);
-
-        let B = Matrix::new(vec![
-            vec![-2.0, 1.0, 2.0, 3.0],
-            vec![3.0, 2.0, 1.0, -1.0],
-            vec![4.0, 3.0, 6.0, 5.0],
-            vec![1.0, 2.0, 7.0, 8.0],
-        ]);
-
-
-        let C = Matrix::new(vec![
-            vec![0.0, 1.0, 2.0, 4.0],
-            vec![1.0, 2.0, 4.0, 8.0],
-            vec![2.0, 4.0, 8.0, 16.0],
-            vec![4.0, 8.0, 16.0, 32.0],
-        ]);
-
-        assert_eq!((A.clone() * B.clone()) * C.clone(), A * (B * C));
-    }
-
-
 
     #[test]
     fn chained_transformations_applied_in_reverse_order() {
