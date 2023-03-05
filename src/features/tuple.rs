@@ -4,7 +4,7 @@ use std::ops::Mul;
 use std::ops::Div;
 use std::ops::Neg;
 use super::util::almost_equal;
-
+use super::matrix::Matrix;
 #[derive(Debug, Clone, Copy)]
 pub struct Tuple {
     pub x: f64,
@@ -137,6 +137,7 @@ impl Mul<Tuple> for f64 {
         tuple * self
     }
 }
+
 
 #[cfg(test)]
 mod tests {
@@ -278,4 +279,5 @@ mod tests {
         let result = c.cross(&d);
         assert_eq!(result, Tuple::vector(1.0, -2.0, 1.0));
     }
+
 }

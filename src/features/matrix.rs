@@ -1,6 +1,7 @@
+use core::fmt;
 use std::ops::{Add, Sub, Mul};
 
-use super::util::almost_equal;
+use super::{util::almost_equal, tuple::Tuple};
 
 fn add_matrix (matrix1: &Matrix, matrix2: &Matrix, sign: bool) -> Matrix {
     let mut rows = Vec::new();
@@ -59,7 +60,7 @@ impl Matrix {
     }
 
     pub fn determinant(&self) -> f64 {
-        if (self.rows.len() != self.rows[0].len()) {
+        if self.rows.len() != self.rows[0].len() {
             panic!("Matrix must be square");
         } else
         if self.rows.len() == 1 {
@@ -128,6 +129,62 @@ impl Matrix {
             Some(Matrix::new(rows))
         }
     }
+
+    pub fn translation(x: f64, y: f64, z: f64) -> Self {
+        Matrix::new(vec![
+            vec![1.0, 0.0, 0.0, x],
+            vec![0.0, 1.0, 0.0, y],
+            vec![0.0, 0.0, 1.0, z],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn scaling(x: f64, y: f64, z: f64) -> Self {
+        Matrix::new(vec![
+            vec![x, 0.0, 0.0, 0.0],
+            vec![0.0, y, 0.0, 0.0],
+            vec![0.0, 0.0, z, 0.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn rotation_x(radians: f64) -> Self {
+        Matrix::new(vec![
+            vec![1.0, 0.0, 0.0, 0.0],
+            vec![0.0, radians.cos(), -radians.sin(), 0.0],
+            vec![0.0, radians.sin(), radians.cos(), 0.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn rotation_y(radians: f64) -> Self {
+        Matrix::new(vec![
+            vec![radians.cos(), 0.0, radians.sin(), 0.0],
+            vec![0.0, 1.0, 0.0, 0.0],
+            vec![-radians.sin(), 0.0, radians.cos(), 0.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
+    
+    }
+
+    pub fn rotation_z(radians: f64) -> Self {
+        Matrix::new(vec![
+            vec![radians.cos(), -radians.sin(), 0.0, 0.0],
+            vec![radians.sin(), radians.cos(), 0.0, 0.0],
+            vec![0.0, 0.0, 1.0, 0.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
+        Matrix::new(vec![
+            vec![1.0, xy, xz, 0.0],
+            vec![yx, 1.0, yz, 0.0],
+            vec![zx, zy, 1.0, 0.0],
+            vec![0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
 }
 
 impl Add for Matrix {
@@ -166,6 +223,7 @@ impl Mul for Matrix {
     }
 }
 
+
 impl PartialEq for Matrix {
     fn eq(&self, other: &Self) -> bool {
         for i in 0..self.rows.len() {
@@ -179,9 +237,35 @@ impl PartialEq for Matrix {
     }
 }
 
+impl Mul<Tuple> for Matrix {
+    type Output = Tuple;
+
+    fn mul(self, other: Tuple) -> Tuple {
+        let x = other.x * self.rows[0][0] + other.y * self.rows[0][1] + other.z * self.rows[0][2] + other.w * self.rows[0][3];
+        let y = other.x * self.rows[1][0] + other.y * self.rows[1][1] + other.z * self.rows[1][2] + other.w * self.rows[1][3];
+        let z = other.x * self.rows[2][0] + other.y * self.rows[2][1] + other.z * self.rows[2][2] + other.w * self.rows[2][3];
+        let w = other.x * self.rows[3][0] + other.y * self.rows[3][1] + other.z * self.rows[3][2] + other.w * self.rows[3][3];
+        Tuple::new(x, y, z, w)
+    }
+}
+
+impl fmt::Display for Matrix {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for row in &self.rows {
+            for val in row {
+                write!(f, "{:.3}\t", val)?;
+            }
+            write!(f, "\n")?;
+        }
+        Ok(())
+    }
+}
 
 #[cfg(test)]
 mod tests {
+
+    use std::f64::consts::PI;
+
     use super::*;
 
     #[test]
@@ -206,7 +290,6 @@ mod tests {
         let matrix2 = Matrix::new(vec![vec![1.0, 0.0, 0.0, 0.0], vec![0.0, 1.0, 0.0, 0.0], vec![0.0, 0.0, 1.0, 0.0], vec![0.0, 0.0, 0.0, 1.0]]);
         assert_eq!(matrix1, matrix2);
     }
-
     #[test]
     fn transpose_matrix() {
         let matrix1 = Matrix::new(vec![vec![1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0]]);
@@ -229,8 +312,10 @@ mod tests {
 
     #[test]
     fn minor_matrix() {
-        let matrix1 = Matrix::new(vec![vec![1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0], vec![7.0, 8.0, 9.0]]);
-        assert_eq!(matrix1.minor(1, 1), 0.0);
+        let matrix1 = Matrix::new(vec![vec![3.0, 5.0, 0.0], vec![2.0, -1.0, -7.0], vec![6.0, -1.0, 5.0]]);
+        let matrix2 = matrix1.submatrix(1, 0);
+        assert_eq!(matrix2.determinant(), 25.0);
+        assert_eq!(matrix1.minor(1, 0), 25.0);
     }
 
     #[test]
@@ -253,5 +338,129 @@ mod tests {
     
         let b = Matrix::new(vec![vec![1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0], vec![7.0, 8.0, 9.0]]);
         assert_eq!(b.inverse(), None);
+    }
+
+    #[test]
+    fn translation_matrix() {
+        let point = Tuple::point(1.0, 2.0, 3.0);
+        let translation = Matrix::translation(2.0, 3.0, 4.0);
+        let expected = Tuple::point(3.0, 5.0, 7.0);
+        let transformed_point = translation * point; 
+        assert_eq!(expected, transformed_point);
+    }
+
+    #[test]
+    fn vector_translation() {
+        let vector = Tuple::vector(1.0, 2.0, 3.0);
+        let translation = Matrix::translation(2.0, 3.0, 4.0);
+        let transformed_vector = translation * vector; 
+        assert_eq!(vector, transformed_vector);
+    }
+
+    #[test]
+    fn point_scaling() {
+        let point = Tuple::point(-4.0,6.0, 8.0);
+        let scaling_matrix = Matrix::scaling(2.0, 3.0, 4.0);
+        let expected = Tuple::point(-8.0, 18.0, 32.0);
+        assert_eq!(scaling_matrix * point, expected);
+    }
+
+    #[test]
+    fn vector_scaling() {
+        let vector = Tuple::vector(1.0,2.0, 3.0);
+        let scaling_matrix = Matrix::scaling(2.0, 3.0, 4.0);
+        let expected = Tuple::vector(2.0, 6.0, 12.0);
+        assert_eq!(scaling_matrix * vector, expected);
+    }
+
+    #[test]
+    fn vector_inverse_scaling() {
+        let vector = Tuple::vector(-4.0,6.0, 8.0);
+        let scaling_matrix = Matrix::scaling(2.0, 3.0, 4.0);
+        let inverted_matrix = scaling_matrix.inverse().unwrap();
+        let expected = Tuple::vector(-2.0, 2.0, 2.0);
+        assert_eq!(inverted_matrix * vector, expected);
+    }
+
+    #[test]
+    fn reflection() {
+        let point = Tuple::point(1.0, 2.0, 3.0);
+        let scaling_matrix = Matrix::scaling(-1.0, 1.0, 1.0);
+        let expected = Tuple::point(-1.0, 2.0, 3.0);
+        assert_eq!(scaling_matrix * point, expected);
+    }
+
+    #[test]
+    fn rotation_x_point() {
+        let point = Tuple::point(0.0, 1.0, 0.0);
+        let half_quarter = Matrix::rotation_x(PI/4.0);
+        let full_quarter = Matrix::rotation_x(PI/2.0);
+        let expected_half_quarter = Tuple::point(0.0, 2.0_f64.sqrt()/2.0, 2.0_f64.sqrt()/2.0);
+        let expected_full_quarter = Tuple::point(0.0, 0.0, 1.0);
+        assert_eq!(half_quarter * point, expected_half_quarter);
+        assert_eq!(full_quarter * point, expected_full_quarter);
+    }
+
+    #[test]
+    fn rotation_x_inverse() {
+        let point = Tuple::point(0.0, 1.0, 0.0);
+        let half_quarter = Matrix::rotation_x(PI/4.0);
+        let inverted_matrix = half_quarter.inverse().unwrap();
+        let expected = Tuple::point(0.0, 2.0_f64.sqrt()/2.0, -2.0_f64.sqrt()/2.0);
+        assert_eq!(inverted_matrix * point, expected);
+    }
+
+    #[test]
+    fn rotation_y_point() {
+        let point = Tuple::point(0.0, 0.0, 1.0);
+        let half_quarter = Matrix::rotation_y(PI/4.0);
+        let full_quarter = Matrix::rotation_y(PI/2.0);
+        let expected_half_quarter = Tuple::point(2.0_f64.sqrt()/2.0, 0.0, 2.0_f64.sqrt()/2.0);
+        let expected_full_quarter = Tuple::point(1.0, 0.0, 0.0);
+        assert_eq!(half_quarter * point, expected_half_quarter);
+        assert_eq!(full_quarter * point, expected_full_quarter);
+    }
+
+    #[test]
+    fn rotation_z_point() {
+        let point = Tuple::point(0.0, 1.0, 0.0);
+        let half_quarter = Matrix::rotation_z(PI/4.0);
+        let full_quarter = Matrix::rotation_z(PI/2.0);
+        let expected_half_quarter = Tuple::point(-2.0_f64.sqrt()/2.0, 2.0_f64.sqrt()/2.0, 0.0);
+        let expected_full_quarter = Tuple::point(-1.0, 0.0, 0.0);
+        assert_eq!(half_quarter * point, expected_half_quarter);
+        assert_eq!(full_quarter * point, expected_full_quarter);
+    }
+
+    #[test]
+    fn shearing_x_in_proportion_to_y() {
+        let point = Tuple::point(2.0, 3.0, 4.0);
+        let shear_matrix = Matrix::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        let expected = Tuple::point(5.0, 3.0, 4.0);
+        assert_eq!(shear_matrix * point, expected);
+    }
+
+    #[test]
+    fn individual_transformations_applied_in_sequence() {
+        let point = Tuple::point(1.0, 0.0, 1.0);
+        let rotation = Matrix::rotation_x(PI / 2.0);
+        let p2 = rotation * point;
+        assert_eq!(p2, Tuple::point(1.0, -1.0, 0.0));
+        let scaling = Matrix::scaling(5.0, 5.0, 5.0);
+        let p3 = scaling * p2;
+        assert_eq!(p3, Tuple::point(5.0, -5.0, 0.0));
+        let translation = Matrix::translation(10.0, 5.0, 7.0);
+        let p4 = translation * p3;
+        assert_eq!(p4, Tuple::point(15.0, 0.0, 7.0));
+    }
+
+    #[test]
+    fn chained_transformations_applied_in_reverse_order() {
+        let point = Tuple::point(1.0, 0.0, 1.0);
+        let rotation = Matrix::rotation_x(PI / 2.0);
+        let scaling = Matrix::scaling(5.0, 5.0, 5.0);
+        let translation = Matrix::translation(10.0, 5.0, 7.0);
+        let transform = translation * scaling * rotation;
+        assert_eq!(transform * point, Tuple::point(15.0, 0.0, 7.0));
     }
 }
