@@ -3,7 +3,6 @@ use std::ops::{Add, Sub, Mul};
 
 use super::{util::almost_equal, tuple::Tuple};
 
-use std::f64::consts::PI;
 fn add_matrix (matrix1: &Matrix, matrix2: &Matrix, sign: bool) -> Matrix {
     let mut rows = Vec::new();
     let sign = if sign { 1.0 } else { -1.0 };
@@ -264,6 +263,8 @@ impl fmt::Display for Matrix {
 
 #[cfg(test)]
 mod tests {
+
+    use std::f64::consts::PI;
 
     use super::*;
 
